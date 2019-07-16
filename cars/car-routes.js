@@ -1,6 +1,6 @@
 const express = require("express");
 const Cars = require("./carsDb");
-const { validateId } = require("../middleware");
+const { validateId, validateBody } = require("../middleware");
 const router = express.Router();
 
 router.get("/", async (req, res) => {
@@ -21,6 +21,18 @@ router.get("/:id", validateId, async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message: "Error retrieving the car"
+    });
+  }
+});
+
+router.post("/", validateBody, async (req, res) => {
+  try {
+    const newCarId = await Cars.createCar(req.body);
+    const newCar = await Cars.getById(newCarId[0]);
+    res.status(201).json(newCar);
+  } catch (error) {
+    res.status(500).json({
+      message: error.toString()
     });
   }
 });
