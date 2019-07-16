@@ -1,7 +1,8 @@
 const Cars = require("../cars/carsDb");
 
 module.exports = {
-  validateId
+  validateId,
+  validateBody
 };
 
 async function validateId(req, res, next) {
@@ -24,4 +25,19 @@ async function validateId(req, res, next) {
   } catch (error) {
     return res.status(400).json({ message: "Sever error" });
   }
+}
+
+async function validateBody(req, res, next) {
+  const { vin, make, model, number } = req.body;
+
+  if (!Object.keys(req.body).length) {
+    return res.status(400).json({ message: "Missing car data" });
+  }
+
+  if (!vin || !make || !model || !number) {
+    return res
+      .status(400)
+      .json({ message: "VIN, make, model and number are required" });
+  }
+  next();
 }
